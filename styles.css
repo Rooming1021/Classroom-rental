@@ -1,0 +1,1453 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+:root {
+  --namu-main-bg: #f6f7f9;
+  --namu-card-bg: #ffffff;
+  --namu-border: #e7e9ee;
+  --namu-point1: #3d5afe;
+  --namu-point2: #9fb2ff;
+  --namu-pin: #c5cedc;
+  --namu-status-green: #16a34a;
+  --namu-status-yellow: #d97706;
+  --namu-status-red: #dc2626;
+  --namu-status-gray: #4b5563;
+  --namu-status-light-green: #ecfdf3;
+  --namu-status-light-yellow: #fff7e8;
+  --namu-status-light-red: #fef2f2;
+  --namu-status-light-gray: #f3f4f6;
+  --namu-text-main: #111827;
+  --namu-text-sub: #6b7280;
+  --namu-text-light: #9ca3af;
+  --namu-text-white: #ffffff;
+  --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --page-gutter: clamp(72px, 5.12vw, 89px);
+  --nav-height: 98px;
+  --main-top: clamp(28px, 3.96svh, 34px);
+  --section-gap: clamp(18px, 2.45svh, 21px);
+  --tabs-width: clamp(600px, 37.7vw, 653px);
+  --tabs-height: 56px;
+  --panel-padding-x: clamp(36px, 2.55vw, 44px);
+  --panel-padding-y: clamp(26px, 3.5svh, 30px);
+  --grid-gap-x: clamp(24px, 1.67vw, 29px);
+  --grid-gap-y: clamp(24px, 3.5svh, 30px);
+  --panel-gap: clamp(22px, 3.15svh, 27px);
+  --desktop-panel-height: calc(100svh - var(--nav-height) - var(--main-top) - var(--tabs-height) - var(--section-gap));
+  --drawer-width: clamp(640px, 40vw, 768px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 1180px;
+  background: var(--namu-main-bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--namu-text-main);
+  background: var(--namu-main-bg);
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  min-width: 1180px;
+  overflow-x: auto;
+  background: var(--namu-main-bg);
+}
+
+.nav-bar {
+  height: var(--nav-height);
+  padding: 0 var(--page-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  background: var(--namu-card-bg);
+  border-bottom: 2px solid var(--namu-border);
+}
+
+.site-title {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.title-dot {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--namu-point1);
+}
+
+.title-text {
+  min-width: 0;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.title-text strong {
+  overflow: hidden;
+  color: var(--namu-text-main);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--namu-text-main);
+  background: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-action svg,
+.info-footer svg,
+.drawer-close svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-action svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.8;
+}
+
+.auth-login-button[hidden],
+.auth-user[hidden],
+.auth-dialog-backdrop[hidden] {
+  display: none;
+}
+
+.auth-login-button {
+  min-width: 48px;
+  justify-content: center;
+}
+
+.google-mark {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: #2563eb;
+  background: #ffffff;
+  border: 1px solid var(--namu-border);
+  border-radius: 50%;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.auth-user {
+  max-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.auth-user-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.1;
+}
+
+.auth-user-copy strong,
+.auth-user-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-user-copy strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.auth-user-copy small {
+  color: var(--namu-text-sub);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.auth-logout-button {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-sub);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.auth-logout-button:hover {
+  color: var(--namu-text-main);
+  background: var(--namu-status-light-gray);
+}
+
+.auth-logout-button svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 38px;
+  background: var(--namu-border);
+}
+
+.school-brand {
+  width: 158px;
+  height: 46px;
+  display: block;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.school-brand img {
+  width: 158px;
+  height: 46px;
+  display: block;
+  object-fit: contain;
+}
+
+.main-view {
+  padding: var(--main-top) var(--page-gutter) 0;
+}
+
+.floor-section {
+  width: min(100%, 1558px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--section-gap);
+}
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.floor-tabs {
+  width: min(100%, var(--tabs-width));
+  height: var(--tabs-height);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.floor-tabs a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: var(--namu-point1);
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: 20px;
+}
+
+.floor-tabs a.active {
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  margin: -2px 0;
+  border-radius: 0 28px 0 28px;
+}
+
+.availability {
+  min-width: 274px;
+  height: 54px;
+  margin: 0;
+  padding: 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--namu-text-sub);
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.availability strong {
+  margin-left: 4px;
+  color: var(--namu-status-green);
+  font-weight: 700;
+}
+
+.card-panel {
+  width: 100%;
+  height: auto;
+  min-height: 648px;
+  padding: var(--panel-padding-y) var(--panel-padding-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--panel-gap);
+  background: var(--namu-card-bg);
+  border-radius: 22px 22px 0 0;
+  overflow: visible;
+}
+
+.classroom-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: 114px;
+  gap: var(--grid-gap-y) var(--grid-gap-x);
+  flex: 0 0 auto;
+}
+
+.room-card {
+  position: relative;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid var(--namu-border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.room-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.08);
+}
+
+.room-card-open:focus-visible,
+.pin:focus-visible,
+.floor-tabs a:focus-visible,
+.nav-action:focus-visible,
+.auth-logout-button:focus-visible,
+.auth-dialog-close:focus-visible,
+.google-login-primary:focus-visible,
+.drawer-close:focus-visible,
+.date-list button:focus-visible,
+.date-move:focus-visible,
+.time-grid button:focus-visible,
+.reserve-button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(61, 90, 254, 0.28);
+  outline-offset: 3px;
+}
+
+.room-card-open {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: clamp(20px, 2.45svh, 24px) clamp(58px, 3.7vw, 64px) clamp(20px, 2.45svh, 24px) clamp(26px, 1.83vw, 32px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.room-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+.room-copy strong {
+  max-width: 210px;
+  overflow: hidden;
+  color: var(--namu-text-main);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-copy span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.room-copy i,
+.time-head li::before {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.pin {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 44px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pin::before {
+  width: 17px;
+  height: 26px;
+  background: var(--namu-pin);
+  content: "";
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.pin:hover {
+  background: rgba(159, 178, 255, 0.18);
+}
+
+.pinned .pin::before {
+  background: var(--namu-point1);
+}
+
+.room-card.reserve,
+.time-grid button.reserve {
+  background: var(--namu-status-light-yellow);
+}
+
+.room-card.rentable,
+.time-grid button.rentable {
+  background: var(--namu-status-light-green);
+}
+
+.room-card.blocked,
+.time-grid button.blocked {
+  background: var(--namu-status-light-red);
+}
+
+.room-card.disabled,
+.time-grid button.disabled {
+  background: var(--namu-status-light-gray);
+}
+
+.reserve .room-copy span,
+.time-grid button.reserve,
+.time-head .reserve {
+  color: var(--namu-status-yellow);
+}
+
+.rentable .room-copy span,
+.time-grid button.rentable,
+.time-head .rentable {
+  color: var(--namu-status-green);
+}
+
+.blocked .room-copy span,
+.time-grid button.blocked,
+.time-head .blocked {
+  color: var(--namu-status-red);
+}
+
+.disabled .room-copy span,
+.time-grid button.disabled,
+.time-head .disabled {
+  color: var(--namu-status-gray);
+}
+
+.info-footer {
+  width: fit-content;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--namu-text-sub);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.info-footer svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  stroke-width: 1.8;
+}
+
+.reservation-drawer {
+  position: fixed;
+  top: 0;
+  right: auto;
+  left: max(24px, calc(100vw - var(--drawer-width)));
+  z-index: 20;
+  width: min(var(--drawer-width), calc(100vw - 24px));
+  height: 100vh;
+  padding: 36px 36px 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  background: var(--namu-card-bg);
+  border-radius: 24px 0 0 24px;
+  box-shadow: var(--shadow-panel);
+  transform: translateX(calc(100% + 24px));
+  transition: none;
+  overflow-y: auto;
+}
+
+.reservation-drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-close {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-sub);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.drawer-close svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+
+.drawer-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 48px;
+}
+
+.drawer-title h2 {
+  margin: 0;
+  color: var(--namu-text-main);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.drawer-title span {
+  padding: 8px 14px;
+  color: var(--namu-status-yellow);
+  background: var(--namu-status-light-yellow);
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.drawer-title span.rentable {
+  color: var(--namu-status-green);
+  background: var(--namu-status-light-green);
+}
+
+.drawer-title span.blocked {
+  color: var(--namu-status-red);
+  background: var(--namu-status-light-red);
+}
+
+.drawer-title span.disabled {
+  color: var(--namu-status-gray);
+  background: var(--namu-status-light-gray);
+}
+
+.drawer-card {
+  padding: 24px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 24px;
+}
+
+.drawer-card h3 {
+  margin: 0;
+  color: var(--namu-text-main);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.date-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.calendar-picker {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-main);
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.calendar-picker:hover,
+.calendar-picker:focus-within {
+  color: var(--namu-point1);
+  border-color: var(--namu-point2);
+}
+
+.calendar-picker svg,
+.date-move svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.calendar-picker svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+
+.calendar-picker input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.date-picker-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-move {
+  width: 32px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-main);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.date-move:hover {
+  color: var(--namu-point1);
+  background: var(--namu-status-light-gray);
+}
+
+.date-move svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2;
+}
+
+.date-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.date-list button {
+  width: 100%;
+  height: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--namu-text-main);
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.15;
+  cursor: pointer;
+}
+
+.date-list button strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.date-list button span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.date-list button:hover:not(:disabled):not(.selected) {
+  color: var(--namu-point1);
+  border-color: var(--namu-point2);
+}
+
+.date-list button.selected {
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  border-color: var(--namu-point2);
+}
+
+.date-list button:disabled {
+  color: var(--namu-text-light);
+  background: var(--namu-status-light-gray);
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.time-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.time-head ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  list-style: none;
+}
+
+.time-head li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.time-grid button {
+  min-height: 54px;
+  padding: 16px 10px;
+  cursor: pointer;
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.time-grid button.selected {
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  border-color: var(--namu-point1);
+  box-shadow: 0 0 0 3px rgba(61, 90, 254, 0.2);
+}
+
+.time-grid button[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.form-card {
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 88px;
+  align-items: end;
+  gap: 24px;
+}
+
+.form-grid label {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-grid label > span:first-child {
+  color: var(--namu-text-sub);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.form-grid input {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  color: var(--namu-text-main);
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.form-grid input::placeholder {
+  color: var(--namu-text-light);
+}
+
+.person-field {
+  display: grid;
+  grid-template-columns: 64px 18px;
+  align-items: end;
+  gap: 6px;
+}
+
+.person-field input {
+  padding: 0 8px;
+  text-align: center;
+}
+
+.person-field em {
+  padding-bottom: 10px;
+  color: var(--namu-text-light);
+  font-size: 14px;
+  font-style: normal;
+}
+
+.reserve-button {
+  min-height: 77px;
+  margin-top: auto;
+  cursor: pointer;
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.reserve-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.reserve-message {
+  min-height: 22px;
+  margin: -8px 4px -8px;
+  color: var(--namu-text-sub);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.reserve-message.success {
+  color: var(--namu-status-green);
+}
+
+.reserve-message.error {
+  color: var(--namu-status-red);
+}
+
+.auth-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.42);
+}
+
+.auth-dialog {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 44px 38px 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  color: var(--namu-text-main);
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.22);
+  text-align: center;
+}
+
+.auth-dialog-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-sub);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.auth-dialog-close:hover {
+  color: var(--namu-text-main);
+  background: var(--namu-status-light-gray);
+}
+
+.auth-dialog-close svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.auth-dialog-mark {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  color: #2563eb;
+  background: #ffffff;
+  border: 2px solid var(--namu-border);
+  border-radius: 50%;
+  font-family: Arial, sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.auth-dialog h2,
+.auth-dialog p {
+  margin: 0;
+}
+
+.auth-dialog h2 {
+  font-size: 25px;
+  font-weight: 750;
+}
+
+.auth-dialog > p {
+  color: var(--namu-text-sub);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.google-login-primary {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--namu-text-main);
+  background: #ffffff;
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.google-login-primary:hover {
+  border-color: var(--namu-point2);
+  background: #f8faff;
+}
+
+.google-login-primary:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.auth-dialog .auth-dialog-message {
+  min-height: 21px;
+  color: var(--namu-status-red);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.my-reservations-view {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  min-width: 1180px;
+  display: none;
+  flex-direction: column;
+  color: var(--namu-text-main);
+  background: var(--namu-main-bg);
+  overflow: auto;
+}
+
+.my-reservations-view.is-open {
+  display: flex;
+}
+
+.my-reservations-header {
+  height: 98px;
+  padding: 0 var(--page-gutter);
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 24px;
+  background: var(--namu-card-bg);
+  border-bottom: 2px solid var(--namu-border);
+}
+
+.my-reservations-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.my-reservations-header-title strong {
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.my-reservations-back,
+.my-reservations-close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-main);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.my-reservations-back:hover,
+.my-reservations-close:hover {
+  background: var(--namu-status-light-gray);
+}
+
+.my-reservations-back svg,
+.my-reservations-close svg,
+.my-nav-icon svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.my-reservations-back svg,
+.my-reservations-close svg {
+  width: 27px;
+  height: 27px;
+  stroke-width: 2;
+}
+
+.my-reservations-layout {
+  width: min(100%, 1510px);
+  min-height: calc(100vh - 98px);
+  margin: 0 auto;
+  padding: 36px 28px 0;
+  display: grid;
+  grid-template-columns: 326px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 24px;
+}
+
+.my-reservations-nav {
+  min-height: 700px;
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 22px 22px 0 0;
+}
+
+.my-reservations-nav > div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-nav-item {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--namu-text-main);
+  background: transparent;
+  border-radius: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.my-nav-item.active {
+  color: var(--namu-point1);
+  background: rgba(159, 178, 255, 0.3);
+}
+
+.my-nav-item:disabled {
+  color: var(--namu-text-sub);
+  cursor: default;
+}
+
+.my-nav-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  color: currentColor;
+  background: var(--namu-status-light-gray);
+  border-radius: 8px;
+}
+
+.my-nav-item.active .my-nav-icon {
+  background: rgba(159, 178, 255, 0.4);
+}
+
+.my-nav-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.8;
+}
+
+.my-reservations-note {
+  margin: 0;
+  padding: 20px 16px 0;
+  color: var(--namu-text-light);
+  border-top: 2px solid var(--namu-border);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.my-reservations-main {
+  min-height: 700px;
+  padding: 46px 36px 70px;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-bottom: 0;
+  border-radius: 22px 22px 0 0;
+}
+
+.my-reservations-title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.my-reservations-title h2,
+.my-reservations-title p {
+  margin: 0;
+}
+
+.my-reservations-title h2 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.my-reservations-title p {
+  color: var(--namu-text-sub);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.my-reservations-divider {
+  height: 2px;
+  margin: 34px 6px;
+  background: var(--namu-border);
+}
+
+.my-reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-reservation-card {
+  position: relative;
+  min-height: 118px;
+  padding: 24px 34px 24px 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.my-reservation-card::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 9px;
+  background: var(--namu-status-green);
+  content: "";
+}
+
+.my-reservation-card.using::before {
+  background: var(--namu-status-yellow);
+}
+
+.my-reservation-card.completed::before {
+  background: var(--namu-status-red);
+}
+
+.my-reservation-card-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.my-reservation-card h3 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--namu-text-main);
+  font-size: 24px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-reservation-card-details {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: var(--namu-text-light);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.my-reservation-status {
+  color: var(--namu-status-green);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.my-reservation-card.using .my-reservation-status {
+  color: var(--namu-status-yellow);
+}
+
+.my-reservation-card.completed .my-reservation-status {
+  color: var(--namu-status-red);
+}
+
+.my-reservation-more {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--namu-text-sub);
+  background: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-reservation-more:hover {
+  color: var(--namu-point1);
+}
+
+.my-reservation-more span {
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.my-reservations-message {
+  min-height: 240px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-sub);
+  background: var(--namu-status-light-gray);
+  border: 2px dashed var(--namu-border);
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.my-reservations-message.error {
+  color: var(--namu-status-red);
+  background: var(--namu-status-light-red);
+}
+
+.my-reservations-list.pinned-classrooms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px 16px;
+}
+
+.pinned-classroom-card {
+  position: relative;
+  height: 140px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  align-items: stretch;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pinned-classroom-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 9px;
+  background: var(--namu-status-green);
+  content: "";
+}
+
+.pinned-classroom-open,
+.pinned-classroom-unpin {
+  background: transparent;
+  cursor: pointer;
+}
+
+.pinned-classroom-open {
+  min-width: 0;
+  padding: 25px 8px 25px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 22px;
+  text-align: left;
+}
+
+.pinned-classroom-open strong {
+  width: 100%;
+  overflow: hidden;
+  color: var(--namu-text-main);
+  font-size: 23px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pinned-classroom-open span {
+  color: var(--namu-status-green);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pinned-classroom-open:hover strong {
+  color: var(--namu-point1);
+}
+
+.pinned-classroom-unpin {
+  display: grid;
+  place-items: center;
+}
+
+.pinned-classroom-unpin:hover {
+  background: var(--namu-status-light-gray);
+}
+
+.pinned-classroom-pin {
+  width: 19px;
+  height: 29px;
+  background: var(--namu-point1);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
