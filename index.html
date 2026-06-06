@@ -72,7 +72,10 @@
               <circle cx="12" cy="12" r="9"></circle>
               <path d="M12 11v6M12 7h.01"></path>
             </svg>
-            교실 카드를 클릭하면 예약 상세 페이지로 이동합니다.
+            <span>
+              문의: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현<br>
+              버그 신고: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현
+            </span>
           </p>
         </div>
       </section>
@@ -191,7 +194,8 @@
               고정된 교실
             </button>
           </div>
-          <p class="my-reservations-note" id="my-view-note">예약 내역은 Supabase에 저장된 데이터를 기준으로 표시됩니다.</p>
+          <p class="my-reservations-note" id="my-view-note">문의: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현
+버그 신고: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현</p>
         </aside>
 
         <main class="my-reservations-main">
@@ -639,7 +643,7 @@
           : "예약한 교실의 이용 일정을 확인할 수 있습니다.";
         myViewNote.textContent = pinnedView
           ? "고정된 교실은 최대 9개까지 등록할 수 있습니다."
-          : "예약 내역은 Supabase에 저장된 데이터를 기준으로 표시됩니다.";
+          : "문의: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현\n버그 신고: tomato.dis@gmail.com, 2026jm30102@jeonminhs.djsch.kr, 3학년 1반 김동현";
 
         if (pinnedView) {
           renderPinnedClassrooms();

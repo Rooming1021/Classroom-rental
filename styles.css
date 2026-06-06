@@ -558,6 +558,10 @@ input:focus-visible {
   stroke-width: 1.8;
 }
 
+.info-footer span {
+  overflow-wrap: anywhere;
+}
+
 .reservation-drawer {
   position: fixed;
   top: 0;
@@ -1214,6 +1218,8 @@ input:focus-visible {
   border-top: 2px solid var(--namu-border);
   font-size: 14px;
   line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
 
 .my-reservations-main {
