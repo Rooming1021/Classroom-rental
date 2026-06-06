@@ -1,0 +1,1122 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학교 반 대여 시스템</title>
+  <link rel="stylesheet" href="./styles.css?v=login-guard-1">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="nav-bar">
+      <a class="site-title" href="./" aria-label="학교 반 대여 시스템 홈">
+        <span class="title-dot" aria-hidden="true"></span>
+        <span class="title-text">
+          <strong>학교 반 대여 시스템</strong>
+        </span>
+      </a>
+
+      <nav class="nav-actions" aria-label="주요 메뉴">
+        <a class="nav-action" href="#" data-open-reservations>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 2v4M16 2v4M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"></path>
+          </svg>
+          <span>내 예약</span>
+        </a>
+
+        <button class="nav-action auth-login-button" id="auth-login-button" type="button">
+          로그인
+        </button>
+
+        <div class="auth-user" id="auth-user" hidden>
+          <span class="auth-avatar" id="auth-avatar" aria-hidden="true"></span>
+          <span class="auth-user-copy">
+            <strong id="auth-user-name"></strong>
+            <small id="auth-user-email"></small>
+          </span>
+          <button class="auth-logout-button" id="auth-logout-button" type="button" aria-label="로그아웃" title="로그아웃">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"></path>
+            </svg>
+          </button>
+        </div>
+
+        <span class="nav-divider" aria-hidden="true"></span>
+
+        <span class="school-brand" aria-label="대전전민고등학교">
+          <img src="./assets/school-logo.gif" width="158" height="46" alt="대전전민고등학교">
+        </span>
+      </nav>
+    </header>
+
+    <main class="main-view">
+      <section class="floor-section" aria-labelledby="floor-title">
+        <h1 id="floor-title" class="sr-only">2층 교실 예약 현황</h1>
+
+        <div class="toolbar">
+          <div class="floor-tabs" role="tablist" aria-label="층 선택">
+            <a role="tab" aria-selected="false" href="#" data-floor="1">1F</a>
+            <a role="tab" aria-selected="true" class="active" href="#" data-floor="2">2F</a>
+            <a role="tab" aria-selected="false" href="#" data-floor="3">3F</a>
+            <a role="tab" aria-selected="false" href="#" data-floor="4">4F</a>
+          </div>
+
+          <p class="availability">현재 예약 가능 교실 <strong id="available-count">12개</strong></p>
+        </div>
+
+        <div class="card-panel">
+          <div class="classroom-grid" id="classroom-grid" aria-live="polite"></div>
+
+          <p class="info-footer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 11v6M12 7h.01"></path>
+            </svg>
+            교실 카드를 클릭하면 예약 상세 페이지로 이동합니다.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <aside class="reservation-drawer" id="room-detail" aria-label="교실 예약 상세" aria-hidden="true">
+      <button class="drawer-close" type="button" aria-label="예약 상세 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="drawer-title">
+        <h2 id="drawer-room-name">(2)수업나눔교실</h2>
+        <span id="drawer-room-status" class="reserve">예약 가능</span>
+      </div>
+
+      <section class="drawer-card" aria-labelledby="date-title">
+        <div class="date-head">
+          <h3 id="date-title">날짜 선택</h3>
+          <label class="calendar-picker" title="달력에서 날짜 선택">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 2v4M16 2v4M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"></path>
+              <circle cx="16.5" cy="16.5" r="2.5"></circle>
+            </svg>
+            <input id="date-picker-input" type="date" aria-label="달력에서 날짜 선택">
+          </label>
+        </div>
+        <div class="date-picker-row">
+          <button class="date-move" type="button" data-date-move="-5" aria-label="이전 날짜 보기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+          </button>
+          <div class="date-list" id="date-list"></div>
+          <button class="date-move" type="button" data-date-move="5" aria-label="다음 날짜 보기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="drawer-card" aria-labelledby="time-title">
+        <div class="time-head">
+          <h3 id="time-title">시간 선택</h3>
+          <ul>
+            <li class="rentable">대여 가능</li>
+            <li class="reserve">예약 확인</li>
+            <li class="blocked">예약 불가</li>
+            <li class="disabled">운영 중단</li>
+          </ul>
+        </div>
+
+        <div class="time-grid">
+          <button class="rentable" type="button" data-base-status="rentable" data-start="08:00" data-end="09:00">8:00 ~ 9:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="09:00" data-end="10:00">9:00 ~ 10:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="11:00" data-end="13:00">11:00 ~ 13:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="13:00" data-end="14:00">13:00 ~ 14:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="14:00" data-end="15:00">14:00 ~ 15:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="15:00" data-end="16:00">15:00 ~ 16:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="16:00" data-end="17:00">16:00 ~ 17:00</button>
+          <button class="rentable" type="button" data-base-status="rentable" data-start="17:00" data-end="18:00">17:00 ~ 18:00</button>
+        </div>
+      </section>
+
+      <section class="drawer-card form-card" aria-labelledby="form-title">
+        <h3 id="form-title">예약 정보 입력</h3>
+        <div class="form-grid">
+          <label>
+            <span>사용 목적</span>
+            <input id="purpose-input" type="text" maxlength="200" placeholder="사용 목적을 입력해주세요.">
+          </label>
+          <label>
+            <span>예상 인원</span>
+            <span class="person-field">
+              <input id="people-input" type="number" min="1" max="999" aria-label="예상 인원">
+              <em>명</em>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <p class="reserve-message" id="reserve-message" aria-live="polite"></p>
+      <button class="reserve-button" id="reserve-button" type="button">예약하기</button>
+    </aside>
+
+    <section class="my-reservations-view" id="my-reservations-view" aria-labelledby="my-reservations-title" aria-hidden="true">
+      <header class="my-reservations-header">
+        <button class="my-reservations-back" type="button" aria-label="교실 목록으로 돌아가기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        </button>
+        <div class="my-reservations-header-title">
+          <span class="title-dot" aria-hidden="true"></span>
+          <strong>학교 반 대여 시스템</strong>
+        </div>
+        <button class="my-reservations-close" type="button" aria-label="내 예약 닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </header>
+
+      <div class="my-reservations-layout">
+        <aside class="my-reservations-nav" aria-label="내 메뉴">
+          <div>
+            <button class="my-nav-item active" type="button" data-my-view="reservations">
+              <span class="my-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 2v4M16 2v4M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"></path>
+                  <path d="M8 13h8M8 17h5"></path>
+                </svg>
+              </span>
+              내 예약
+            </button>
+            <button class="my-nav-item" type="button" data-my-view="pinned">
+              <span class="my-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 3h12v18l-6-4-6 4V3Z"></path>
+                </svg>
+              </span>
+              고정된 교실
+            </button>
+          </div>
+          <p class="my-reservations-note" id="my-view-note">예약 내역은 Supabase에 저장된 데이터를 기준으로 표시됩니다.</p>
+        </aside>
+
+        <main class="my-reservations-main">
+          <div class="my-reservations-title">
+            <h2 id="my-reservations-title">내 예약</h2>
+            <p id="my-reservations-description">예약한 교실의 이용 일정을 확인할 수 있습니다.</p>
+          </div>
+          <div class="my-reservations-divider"></div>
+          <div class="my-reservations-list" id="my-reservations-list"></div>
+        </main>
+      </div>
+    </section>
+
+    <div class="auth-dialog-backdrop" id="auth-dialog" hidden>
+      <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-dialog-title">
+        <button class="auth-dialog-close" id="auth-dialog-close" type="button" aria-label="로그인 안내 닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+        <span class="auth-dialog-mark" aria-hidden="true">G</span>
+        <h2 id="auth-dialog-title">Google 계정으로 로그인</h2>
+        <p>로그인하면 어느 기기에서든 본인이 예약한 교실만 확인할 수 있습니다.</p>
+        <button class="google-login-primary" id="google-login-primary" type="button">
+          <span class="google-mark" aria-hidden="true">G</span>
+          Google 계정으로 계속하기
+        </button>
+        <p class="auth-dialog-message" id="auth-dialog-message" aria-live="polite"></p>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    (() => {
+      const supabaseConfig = window.SUPABASE_CONFIG || {};
+      const supabasePublicKey = supabaseConfig.publishableKey || supabaseConfig.anonKey;
+      const supabaseConfigured =
+        window.supabase &&
+        supabaseConfig.url &&
+        supabasePublicKey &&
+        !supabaseConfig.url.includes("YOUR_PROJECT_ID") &&
+        !supabasePublicKey.includes("YOUR_SUPABASE_");
+      const database = supabaseConfigured
+        ? window.supabase.createClient(supabaseConfig.url, supabasePublicKey)
+        : null;
+
+      const statusMeta = {
+        reserve: { label: "예약 가능" },
+        rentable: { label: "대여 가능" },
+        blocked: { label: "예약 불가" },
+        disabled: { label: "사용 불가" }
+      };
+
+      const room = (code, name, pinned = false) => ({
+        code,
+        name,
+        status: "rentable",
+        pinned
+      });
+
+      const floors = {
+        1: {
+          rooms: [
+            room("A11", "1-1"),
+            room("A12", "1-2"),
+            room("A13", "1-3"),
+            room("A14", "1-4"),
+            room("A15", "교육자료 보관실"),
+            room("A16", "1-5"),
+            room("A17", "1-6"),
+            room("A18", "실명 표기 없음"),
+            room("B13", "학습지원중앙센터 / 구 본부교무실"),
+            room("B14", "방송실"),
+            room("C11", "보건실"),
+            room("C12", "서고"),
+            room("C13", "행정지원실"),
+            room("C14", "교장실"),
+            room("D11", "직원휴게실"),
+            room("D12", "특수학급 / 통합교육지원실"),
+            room("D13", "한솔공동체실 / 구 시청각실"),
+            room("D15", "당직실"),
+            room("D16", "인쇄 및 시설지원실")
+          ]
+        },
+        2: {
+          rooms: [
+            room("A21", "2-7"),
+            room("A22", "2-8"),
+            room("A23", "2-9"),
+            room("A24", "2-10"),
+            room("A25", "홈베이스"),
+            room("A26", "1-7"),
+            room("A27", "1-8"),
+            room("A28", "1-9"),
+            room("B21", "1학년 학습지원센터"),
+            room("B22 추정", "생활상담지원실"),
+            room("B23", "교직원휴게실 여"),
+            room("B24", "과학정보실 / 인성인권교육지원실"),
+            room("B25", "전산실"),
+            room("C21", "수업혁신지원센터 / 수석"),
+            room("C22", "Wee Class"),
+            room("C23", "수업나눔교실 2", true),
+            room("C24", "수업나눔교실 1", true),
+            room("C25", "컴퓨터실"),
+            room("D21", "다목적교실 / 체육활동실"),
+            room("D22", "학생생활지원실"),
+            room("D23", "진로진학상담지원실"),
+            room("D24", "진로진학활동실"),
+            room("D25", "학교운영위원회실 / 학교역사자료실")
+          ]
+        },
+        3: {
+          rooms: [
+            room("A31", "2-1"),
+            room("A32", "2-2"),
+            room("A33", "2-3"),
+            room("A34", "2-4"),
+            room("A35", "학생자치실"),
+            room("A36", "3-8"),
+            room("A37", "3-9"),
+            room("A38", "3-10"),
+            room("B31", "2-6"),
+            room("B32", "2-5"),
+            room("B33", "2학년 학습지원센터"),
+            room("B34 추정", "생활상담지원실"),
+            room("B35", "멀티준비실"),
+            room("C32", "한솔에듀클래스"),
+            room("D33", "융합교과실")
+          ]
+        },
+        4: {
+          rooms: [
+            room("A41", "3-1"),
+            room("A42", "3-2"),
+            room("A43", "3-3"),
+            room("A44", "3-4"),
+            room("A45", "홈베이스"),
+            room("A46", "3-5"),
+            room("A47", "3-6"),
+            room("A48", "3-7"),
+            room("B41", "3학년 수시지원센터"),
+            room("B42 추정", "생활상담지원실"),
+            room("B43", "교직원휴게실 남"),
+            room("B44", "화학실"),
+            room("C41", "미술준비실"),
+            room("C42", "미술실"),
+            room("C43", "음악준비실"),
+            room("C44", "생명과학실"),
+            room("D41", "음악실"),
+            room("D42", "기술가정"),
+            room("D44", "물리지구과학실")
+          ]
+        }
+      };
+
+      const floorTitle = document.getElementById("floor-title");
+      const tabs = document.querySelectorAll("[data-floor]");
+      const grid = document.getElementById("classroom-grid");
+      const availability = document.getElementById("available-count");
+      const drawer = document.getElementById("room-detail");
+      const drawerName = document.getElementById("drawer-room-name");
+      const drawerStatus = document.getElementById("drawer-room-status");
+      const drawerClose = document.querySelector(".drawer-close");
+      const reservationsLink = document.querySelector("[data-open-reservations]");
+      const authLoginButton = document.getElementById("auth-login-button");
+      const authUser = document.getElementById("auth-user");
+      const authAvatar = document.getElementById("auth-avatar");
+      const authUserName = document.getElementById("auth-user-name");
+      const authUserEmail = document.getElementById("auth-user-email");
+      const authLogoutButton = document.getElementById("auth-logout-button");
+      const authDialog = document.getElementById("auth-dialog");
+      const authDialogClose = document.getElementById("auth-dialog-close");
+      const authDialogMessage = document.getElementById("auth-dialog-message");
+      const googleLoginPrimary = document.getElementById("google-login-primary");
+      const dateList = document.getElementById("date-list");
+      const dateInput = document.getElementById("date-picker-input");
+      const dateMoveButtons = document.querySelectorAll("[data-date-move]");
+      const timeButtons = document.querySelectorAll(".time-grid button");
+      const purposeInput = document.getElementById("purpose-input");
+      const peopleInput = document.getElementById("people-input");
+      const reserveButton = document.getElementById("reserve-button");
+      const reserveMessage = document.getElementById("reserve-message");
+      const myReservationsView = document.getElementById("my-reservations-view");
+      const myReservationsList = document.getElementById("my-reservations-list");
+      const myReservationsBack = document.querySelector(".my-reservations-back");
+      const myReservationsClose = document.querySelector(".my-reservations-close");
+      const myViewButtons = document.querySelectorAll("[data-my-view]");
+      const myViewTitle = document.getElementById("my-reservations-title");
+      const myViewDescription = document.getElementById("my-reservations-description");
+      const myViewNote = document.getElementById("my-view-note");
+      const weekdayNames = ["일", "월", "화", "수", "목", "금", "토"];
+      const pinnedRoomsStorageKey = "school-pinned-room-codes";
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      let selectedDate = new Date(today);
+      let selectedRoom = null;
+      let selectedSlot = null;
+      let currentFloor = "2";
+      let currentUser = null;
+      let reserveSaving = false;
+
+      function getUserLabel(user) {
+        return user?.user_metadata?.full_name ||
+          user?.user_metadata?.name ||
+          user?.email?.split("@")[0] ||
+          "사용자";
+      }
+
+      function getUserInitial(user) {
+        return getUserLabel(user).trim().charAt(0).toUpperCase() || "G";
+      }
+
+      function syncReserveButtonLabel() {
+        if (reserveSaving) {
+          return;
+        }
+        reserveButton.textContent = currentUser ? "예약하기" : "Google 로그인 후 예약하기";
+      }
+
+      function updateAuthUI(user) {
+        currentUser = user || null;
+        const signedIn = Boolean(currentUser);
+        authLoginButton.hidden = signedIn;
+        authUser.hidden = !signedIn;
+
+        if (signedIn) {
+          authAvatar.textContent = getUserInitial(currentUser);
+          authUserName.textContent = getUserLabel(currentUser);
+          authUserEmail.textContent = currentUser.email || "Google 계정";
+          closeAuthDialog();
+        } else {
+          authAvatar.textContent = "";
+          authUserName.textContent = "";
+          authUserEmail.textContent = "";
+          closeMyReservations();
+        }
+        syncReserveButtonLabel();
+      }
+
+      function openAuthDialog(message = "") {
+        authDialogMessage.textContent = message;
+        googleLoginPrimary.disabled = false;
+        authDialog.hidden = false;
+        googleLoginPrimary.focus();
+      }
+
+      function closeAuthDialog() {
+        authDialog.hidden = true;
+        authDialogMessage.textContent = "";
+      }
+
+      async function signInWithGoogle() {
+        if (!database) {
+          openAuthDialog("Supabase 연결 정보를 먼저 설정해주세요.");
+          return;
+        }
+
+        googleLoginPrimary.disabled = true;
+        authDialogMessage.textContent = "Google 로그인 화면으로 이동 중입니다.";
+        const redirectTo = new URL("./", window.location.href).href;
+        const { error } = await database.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo }
+        });
+        if (error) {
+          authDialogMessage.textContent = error.message || "Google 로그인을 시작하지 못했습니다.";
+          googleLoginPrimary.disabled = false;
+        }
+      }
+
+      async function signOut() {
+        if (!database) {
+          return;
+        }
+        authLogoutButton.disabled = true;
+        const { error } = await database.auth.signOut();
+        authLogoutButton.disabled = false;
+        if (error) {
+          window.alert(error.message || "로그아웃하지 못했습니다.");
+        }
+      }
+
+      async function initializeAuth() {
+        if (!database) {
+          updateAuthUI(null);
+          return;
+        }
+
+        const { data, error } = await database.auth.getSession();
+        if (error) {
+          console.error("로그인 상태를 확인하지 못했습니다.", error);
+        }
+        updateAuthUI(data?.session?.user || null);
+
+        database.auth.onAuthStateChange((_event, session) => {
+          updateAuthUI(session?.user || null);
+        });
+      }
+
+      function guardSignedOutActions(event) {
+        if (currentUser) {
+          return;
+        }
+
+        const action = event.target.closest(
+          "button, [role='tab'], [data-open-reservations]"
+        );
+        if (
+          !action ||
+          action === authLoginButton ||
+          action.closest("#auth-dialog")
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openAuthDialog("로그인 후 이용 가능합니다.");
+      }
+
+      function findRoom(roomCode) {
+        for (const floor of Object.values(floors)) {
+          const found = floor.rooms.find((roomItem) => roomItem.code === roomCode);
+          if (found) {
+            return found;
+          }
+        }
+        return null;
+      }
+
+      function getDefaultPinnedRoomCodes() {
+        return Object.values(floors)
+          .flatMap((floor) => floor.rooms)
+          .filter((roomItem) => roomItem.pinned)
+          .map((roomItem) => roomItem.code);
+      }
+
+      function getPinnedRoomCodes() {
+        try {
+          const saved = localStorage.getItem(pinnedRoomsStorageKey);
+          if (saved === null) {
+            const defaults = getDefaultPinnedRoomCodes();
+            localStorage.setItem(pinnedRoomsStorageKey, JSON.stringify(defaults));
+            return defaults;
+          }
+          const codes = JSON.parse(saved);
+          return Array.isArray(codes) ? codes.filter((code) => typeof code === "string") : [];
+        } catch {
+          return getDefaultPinnedRoomCodes();
+        }
+      }
+
+      function isRoomPinned(roomCode) {
+        return getPinnedRoomCodes().includes(roomCode);
+      }
+
+      function removePinnedRoom(roomCode) {
+        const nextCodes = getPinnedRoomCodes().filter((code) => code !== roomCode);
+        localStorage.setItem(pinnedRoomsStorageKey, JSON.stringify(nextCodes));
+      }
+
+      function togglePinnedRoom(roomCode) {
+        const pinnedCodes = getPinnedRoomCodes();
+        if (pinnedCodes.includes(roomCode)) {
+          removePinnedRoom(roomCode);
+          return false;
+        }
+        if (pinnedCodes.length >= 9) {
+          window.alert("고정된 교실은 최대 9개까지 등록할 수 있습니다.");
+          return false;
+        }
+
+        localStorage.setItem(
+          pinnedRoomsStorageKey,
+          JSON.stringify([...pinnedCodes, roomCode])
+        );
+        return true;
+      }
+
+      function createPinnedClassroomCard(roomItem) {
+        const card = document.createElement("article");
+        card.className = "pinned-classroom-card";
+
+        const openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.className = "pinned-classroom-open";
+        openButton.setAttribute("aria-label", `${roomItem.name} 예약 열기`);
+
+        const title = document.createElement("strong");
+        title.textContent = roomItem.name;
+
+        const status = document.createElement("span");
+        status.textContent = `●  ${roomItem.code} · 대여 가능`;
+        openButton.append(title, status);
+        openButton.addEventListener("click", () => {
+          closeMyReservations();
+          openDrawer(roomItem);
+        });
+
+        const unpinButton = document.createElement("button");
+        unpinButton.type = "button";
+        unpinButton.className = "pinned-classroom-unpin";
+        unpinButton.setAttribute("aria-label", `${roomItem.name} 고정 해제`);
+        unpinButton.setAttribute("aria-pressed", "true");
+
+        const pinIcon = document.createElement("span");
+        pinIcon.className = "pinned-classroom-pin";
+        pinIcon.setAttribute("aria-hidden", "true");
+        unpinButton.append(pinIcon);
+        unpinButton.addEventListener("click", () => {
+          removePinnedRoom(roomItem.code);
+          renderPinnedClassrooms();
+          renderFloor(currentFloor);
+        });
+
+        card.append(openButton, unpinButton);
+        return card;
+      }
+
+      function renderPinnedClassrooms() {
+        const pinnedRooms = getPinnedRoomCodes()
+          .map(findRoom)
+          .filter(Boolean)
+          .slice(0, 9);
+
+        if (pinnedRooms.length === 0) {
+          showMyReservationsMessage("고정된 교실이 없습니다.", "empty");
+          return;
+        }
+
+        myReservationsList.replaceChildren(...pinnedRooms.map(createPinnedClassroomCard));
+      }
+
+      function setMyView(viewName) {
+        const pinnedView = viewName === "pinned";
+        myViewButtons.forEach((button) => {
+          const active = button.dataset.myView === viewName;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-current", active ? "page" : "false");
+        });
+        myReservationsList.classList.toggle("pinned-classrooms-grid", pinnedView);
+        myViewTitle.textContent = pinnedView ? "고정된 교실" : "내 예약";
+        myViewDescription.textContent = pinnedView
+          ? "자주 사용하는 교실을 고정해두고 빠르게 예약하세요."
+          : "예약한 교실의 이용 일정을 확인할 수 있습니다.";
+        myViewNote.textContent = pinnedView
+          ? "고정된 교실은 최대 9개까지 등록할 수 있습니다."
+          : "예약 내역은 Supabase에 저장된 데이터를 기준으로 표시됩니다.";
+
+        if (pinnedView) {
+          renderPinnedClassrooms();
+        } else {
+          void renderMyReservations();
+        }
+      }
+
+      function getReservationUsageState(reservation) {
+        const start = new Date(`${reservation.reservation_date}T${reservation.start_time}`);
+        const end = new Date(`${reservation.reservation_date}T${reservation.end_time}`);
+        const now = new Date();
+
+        if (now < start) {
+          return { className: "upcoming", label: "사용 전" };
+        }
+        if (now < end) {
+          return { className: "using", label: "사용 중" };
+        }
+        return { className: "completed", label: "사용 완료" };
+      }
+
+      function formatReservationDate(reservation) {
+        const date = parseInputDate(reservation.reservation_date);
+        const dateLabel = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} (${weekdayNames[date.getDay()]})`;
+        return `${dateLabel}  ${reservation.start_time.slice(0, 5)} ~ ${reservation.end_time.slice(0, 5)}`;
+      }
+
+      function createMyReservationCard(reservation) {
+        const usageState = getReservationUsageState(reservation);
+        const roomItem = findRoom(reservation.room_code);
+        const card = document.createElement("article");
+        card.className = `my-reservation-card ${usageState.className}`;
+
+        const content = document.createElement("div");
+        content.className = "my-reservation-card-content";
+
+        const title = document.createElement("h3");
+        title.textContent = roomItem?.name || reservation.room_code;
+
+        const details = document.createElement("div");
+        details.className = "my-reservation-card-details";
+
+        const status = document.createElement("strong");
+        status.className = "my-reservation-status";
+        status.textContent = `●  ${usageState.label}`;
+
+        const time = document.createElement("span");
+        time.textContent = formatReservationDate(reservation);
+        details.append(status, time);
+        content.append(title, details);
+
+        const more = document.createElement("button");
+        more.type = "button";
+        more.className = "my-reservation-more";
+        more.textContent = "상세 보기";
+        more.addEventListener("click", () => {
+          if (!roomItem) {
+            return;
+          }
+          closeMyReservations();
+          openDrawer(roomItem);
+          selectedDate = parseInputDate(reservation.reservation_date);
+          renderDates();
+        });
+
+        const arrow = document.createElement("span");
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.textContent = "›";
+        more.append(arrow);
+        card.append(content, more);
+        return card;
+      }
+
+      function showMyReservationsMessage(message, className = "") {
+        const messageElement = document.createElement("p");
+        messageElement.className = `my-reservations-message${className ? ` ${className}` : ""}`;
+        messageElement.textContent = message;
+        myReservationsList.replaceChildren(messageElement);
+      }
+
+      async function renderMyReservations() {
+        showMyReservationsMessage("예약 내역을 불러오는 중입니다.");
+        if (!database) {
+          showMyReservationsMessage("Supabase 연결 정보를 설정해주세요.", "error");
+          return;
+        }
+        if (!currentUser) {
+          showMyReservationsMessage("Google 로그인 후 본인의 예약 내역을 확인할 수 있습니다.", "empty");
+          return;
+        }
+
+        const { data, error } = await database
+          .from("reservations")
+          .select("id, room_code, reservation_date, start_time, end_time, status")
+          .eq("user_id", currentUser.id)
+          .eq("status", "confirmed")
+          .order("reservation_date", { ascending: false })
+          .order("start_time", { ascending: false });
+
+        if (error) {
+          showMyReservationsMessage(error.message || "예약 내역을 불러오지 못했습니다.", "error");
+          return;
+        }
+        if (data.length === 0) {
+          showMyReservationsMessage("표시할 예약 내역이 없습니다.", "empty");
+          return;
+        }
+
+        myReservationsList.replaceChildren(...data.map(createMyReservationCard));
+      }
+
+      function openMyReservations(viewName = "reservations") {
+        if (!currentUser) {
+          openAuthDialog("내 예약을 확인하려면 Google 로그인이 필요합니다.");
+          return;
+        }
+        closeDrawer();
+        myReservationsView.classList.add("is-open");
+        myReservationsView.setAttribute("aria-hidden", "false");
+        setMyView(viewName);
+      }
+
+      function closeMyReservations() {
+        myReservationsView.classList.remove("is-open");
+        myReservationsView.setAttribute("aria-hidden", "true");
+      }
+
+      function addDays(date, amount) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + amount);
+        return result;
+      }
+
+      function toInputDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function parseInputDate(value) {
+        const [year, month, day] = value.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+
+      function renderDates() {
+        const dates = [-2, -1, 0, 1, 2].map((offset) => addDays(selectedDate, offset));
+        const buttons = dates.map((date) => {
+          const button = document.createElement("button");
+          const isSelected = toInputDate(date) === toInputDate(selectedDate);
+          const isPast = date < today;
+          button.type = "button";
+          button.className = isSelected ? "selected" : "";
+          button.disabled = isPast;
+          button.setAttribute("aria-pressed", String(isSelected));
+          button.setAttribute(
+            "aria-label",
+            `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${weekdayNames[date.getDay()]}요일`
+          );
+
+          const dateText = document.createElement("strong");
+          dateText.textContent = `${date.getMonth() + 1}.${date.getDate()}`;
+          const weekday = document.createElement("span");
+          weekday.textContent = weekdayNames[date.getDay()];
+          button.append(dateText, weekday);
+          button.addEventListener("click", () => {
+            selectedDate = new Date(date);
+            dateInput.value = toInputDate(selectedDate);
+            renderDates();
+          });
+          return button;
+        });
+
+        dateList.replaceChildren(...buttons);
+        dateInput.value = toInputDate(selectedDate);
+        void refreshTimeSlots();
+      }
+
+      function setReserveMessage(message = "", type = "") {
+        reserveMessage.textContent = message;
+        reserveMessage.className = `reserve-message${type ? ` ${type}` : ""}`;
+      }
+
+      function resetTimeButtons() {
+        selectedSlot = null;
+        timeButtons.forEach((button) => {
+          button.className = button.dataset.baseStatus;
+          button.dataset.reserved = "false";
+          button.setAttribute(
+            "aria-disabled",
+            String(button.dataset.baseStatus !== "rentable")
+          );
+        });
+      }
+
+      async function refreshTimeSlots() {
+        resetTimeButtons();
+        if (!selectedRoom?.code) {
+          return;
+        }
+        if (!database) {
+          setReserveMessage("Supabase 연결 정보를 설정해주세요.", "error");
+          return;
+        }
+
+        try {
+          const { data, error } = await database
+            .rpc("get_reserved_slots", {
+              target_room_code: selectedRoom.code,
+              target_date: toInputDate(selectedDate)
+            });
+          if (error) {
+            throw error;
+          }
+
+          timeButtons.forEach((button) => {
+            const hasConflict = (data || []).some((reservation) =>
+              button.dataset.start < reservation.end_time.slice(0, 5) &&
+              button.dataset.end > reservation.start_time.slice(0, 5)
+            );
+
+            if (hasConflict) {
+              button.className = "reserve";
+              button.dataset.reserved = "true";
+              button.setAttribute("aria-disabled", "true");
+            }
+          });
+        } catch (error) {
+          setReserveMessage(error.message || "예약 현황을 불러오지 못했습니다.", "error");
+        }
+      }
+
+      function positionDrawer() {
+        const drawerWidth = drawer.getBoundingClientRect().width;
+        drawer.style.left = `${Math.max(24, window.innerWidth - drawerWidth)}px`;
+      }
+
+      function openDrawer(room) {
+        const meta = statusMeta[room.status] || statusMeta.disabled;
+        selectedRoom = room.code ? room : null;
+        selectedSlot = null;
+        setReserveMessage();
+        purposeInput.value = "";
+        peopleInput.value = "";
+        reserveButton.disabled = !selectedRoom ||
+          (room.status !== "reserve" && room.status !== "rentable");
+        positionDrawer();
+        drawerName.textContent = room.code ? `${room.code} · ${room.name}` : room.name;
+        drawerStatus.textContent = meta.label;
+        drawerStatus.className = room.status;
+        drawer.classList.add("is-open");
+        drawer.setAttribute("aria-hidden", "false");
+        void refreshTimeSlots();
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove("is-open");
+        drawer.setAttribute("aria-hidden", "true");
+      }
+
+      function createRoomCard(room) {
+        const meta = statusMeta[room.status] || statusMeta.disabled;
+        const pinned = isRoomPinned(room.code);
+        const card = document.createElement("article");
+        card.className = `room-card ${room.status}${isRoomPinned(room.code) ? " pinned" : ""}`;
+
+        const openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.className = "room-card-open";
+        openButton.setAttribute("aria-label", `${room.name} 예약 열기`);
+
+        const copy = document.createElement("span");
+        copy.className = "room-copy";
+
+        const title = document.createElement("strong");
+        title.textContent = room.name;
+
+        const state = document.createElement("span");
+        const dot = document.createElement("i");
+        state.append(dot, `${room.code} · ${meta.label}`);
+
+        const pin = document.createElement("button");
+        pin.type = "button";
+        pin.className = "pin";
+        pin.setAttribute("aria-label", `${room.name} ${pinned ? "고정 해제" : "고정"}`);
+        pin.setAttribute("aria-pressed", String(pinned));
+        pin.title = pinned ? "고정 해제" : "고정된 교실에 추가";
+
+        copy.append(title, state);
+        openButton.append(copy);
+        openButton.addEventListener("click", () => openDrawer(room));
+        pin.addEventListener("click", () => {
+          togglePinnedRoom(room.code);
+          renderFloor(currentFloor);
+        });
+        card.append(openButton, pin);
+
+        return card;
+      }
+
+      function renderFloor(floor) {
+        const data = floors[floor] || floors[2];
+        currentFloor = String(floor);
+        floorTitle.textContent = `${currentFloor}층 교실 예약 현황`;
+        const availableRooms = data.rooms.filter((roomItem) =>
+          roomItem.status === "reserve" || roomItem.status === "rentable"
+        ).length;
+        availability.textContent = `${availableRooms}개`;
+        grid.replaceChildren(...data.rooms.map(createRoomCard));
+
+        tabs.forEach((tab) => {
+          const selected = tab.dataset.floor === currentFloor;
+          tab.classList.toggle("active", selected);
+          tab.setAttribute("aria-selected", String(selected));
+        });
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", (event) => {
+          event.preventDefault();
+          renderFloor(tab.dataset.floor);
+          closeDrawer();
+        });
+      });
+
+      drawerClose.addEventListener("click", closeDrawer);
+      document.addEventListener("click", guardSignedOutActions, true);
+
+      reservationsLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        openMyReservations();
+      });
+
+      authLoginButton.addEventListener("click", () => openAuthDialog());
+      googleLoginPrimary.addEventListener("click", signInWithGoogle);
+      authLogoutButton.addEventListener("click", signOut);
+      authDialogClose.addEventListener("click", closeAuthDialog);
+      authDialog.addEventListener("click", (event) => {
+        if (event.target === authDialog) {
+          closeAuthDialog();
+        }
+      });
+
+      myReservationsBack.addEventListener("click", closeMyReservations);
+      myReservationsClose.addEventListener("click", closeMyReservations);
+      myViewButtons.forEach((button) => {
+        button.addEventListener("click", () => setMyView(button.dataset.myView));
+      });
+
+      dateMoveButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const nextDate = addDays(selectedDate, Number(button.dataset.dateMove));
+          selectedDate = nextDate < today ? new Date(today) : nextDate;
+          renderDates();
+        });
+      });
+
+      dateInput.min = toInputDate(today);
+      dateInput.addEventListener("change", () => {
+        if (!dateInput.value) {
+          return;
+        }
+
+        const pickedDate = parseInputDate(dateInput.value);
+        selectedDate = pickedDate < today ? new Date(today) : pickedDate;
+        renderDates();
+      });
+
+      timeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (
+            button.dataset.baseStatus !== "rentable" ||
+            button.dataset.reserved === "true" ||
+            !selectedRoom
+          ) {
+            return;
+          }
+
+          timeButtons.forEach((timeButton) => timeButton.classList.remove("selected"));
+          button.classList.add("selected");
+          selectedSlot = {
+            start_time: button.dataset.start,
+            end_time: button.dataset.end
+          };
+          setReserveMessage();
+        });
+      });
+
+      reserveButton.addEventListener("click", async () => {
+        const purpose = purposeInput.value.trim();
+        const expectedPeople = Number(peopleInput.value);
+
+        if (!database) {
+          setReserveMessage("Supabase 연결 정보를 먼저 설정해주세요.", "error");
+          return;
+        }
+        if (!currentUser) {
+          setReserveMessage("예약하려면 Google 로그인이 필요합니다.", "error");
+          openAuthDialog("예약을 저장하려면 Google 로그인이 필요합니다.");
+          return;
+        }
+        if (!selectedRoom) {
+          setReserveMessage("예약할 교실을 선택해주세요.", "error");
+          return;
+        }
+        if (!selectedSlot) {
+          setReserveMessage("대여 가능한 시간을 선택해주세요.", "error");
+          return;
+        }
+        if (!purpose) {
+          setReserveMessage("사용 목적을 입력해주세요.", "error");
+          purposeInput.focus();
+          return;
+        }
+        if (!Number.isInteger(expectedPeople) || expectedPeople < 1 || expectedPeople > 999) {
+          setReserveMessage("예상 인원을 1명 이상 입력해주세요.", "error");
+          peopleInput.focus();
+          return;
+        }
+
+        reserveButton.disabled = true;
+        reserveSaving = true;
+        reserveButton.textContent = "저장 중...";
+        setReserveMessage();
+
+        try {
+          const { error } = await database
+            .from("reservations")
+            .insert({
+              room_code: selectedRoom.code,
+              room_name: selectedRoom.name,
+              reservation_date: toInputDate(selectedDate),
+              start_time: selectedSlot.start_time,
+              end_time: selectedSlot.end_time,
+              purpose,
+              expected_people: expectedPeople
+            });
+          if (error) {
+            if (error.code === "23P01") {
+              throw new Error("이미 예약된 시간입니다.");
+            }
+            throw error;
+          }
+
+          purposeInput.value = "";
+          peopleInput.value = "";
+          setReserveMessage("예약이 저장되었습니다.", "success");
+          await refreshTimeSlots();
+        } catch (error) {
+          setReserveMessage(error.message || "예약 저장에 실패했습니다.", "error");
+        } finally {
+          reserveButton.disabled = false;
+          reserveSaving = false;
+          syncReserveButtonLabel();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeAuthDialog();
+          closeMyReservations();
+          closeDrawer();
+        }
+      });
+
+      window.addEventListener("resize", positionDrawer);
+
+      positionDrawer();
+      renderDates();
+      renderFloor(currentFloor);
+      void initializeAuth();
+      if (!database) {
+        console.info("Supabase 연결 전: supabase-config.js의 URL과 publishable key를 설정하세요.");
+      }
+    })();
+  </script>
+</body>
+</html>
+
