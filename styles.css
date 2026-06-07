@@ -165,7 +165,8 @@ button {
 
 .auth-login-button[hidden],
 .auth-user[hidden],
-.auth-dialog-backdrop[hidden] {
+.auth-dialog-backdrop[hidden],
+.admin-login-backdrop[hidden] {
   display: none;
 }
 
@@ -271,9 +272,12 @@ button {
 .school-brand {
   width: 158px;
   height: 46px;
+  padding: 0;
   display: block;
   align-items: center;
   flex: 0 0 auto;
+  background: transparent;
+  user-select: none;
 }
 
 .school-brand img {
@@ -1296,6 +1300,10 @@ input:focus-visible {
   background: var(--namu-status-red);
 }
 
+.my-reservation-card.admin-cancelled::before {
+  background: var(--namu-status-gray);
+}
+
 .my-reservation-card-content {
   min-width: 0;
   display: flex;
@@ -1334,6 +1342,10 @@ input:focus-visible {
 
 .my-reservation-card.completed .my-reservation-status {
   color: var(--namu-status-red);
+}
+
+.my-reservation-card.admin-cancelled .my-reservation-status {
+  color: var(--namu-status-gray);
 }
 
 .my-reservation-more {
@@ -1464,6 +1476,14 @@ input:focus-visible {
   white-space: nowrap;
 }
 
+.pinned-classroom-card.blocked .pinned-classroom-open span {
+  color: var(--namu-status-red);
+}
+
+.pinned-classroom-card.disabled .pinned-classroom-open span {
+  color: var(--namu-status-gray);
+}
+
 .pinned-classroom-open:hover strong {
   color: var(--namu-point1);
 }
@@ -1483,4 +1503,398 @@ input:focus-visible {
   background: var(--namu-point1);
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 100'%3E%3Cpath d='M12 10H52M22 10V44L8 61H56L42 44V10M32 61V92' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.admin-view {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  min-width: 1180px;
+  display: none;
+  flex-direction: column;
+  color: var(--namu-text-main);
+  background: var(--namu-main-bg);
+  overflow: auto;
+}
+
+.admin-view.is-open {
+  display: flex;
+}
+
+.admin-header {
+  height: 98px;
+  padding: 0 var(--page-gutter);
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 24px;
+  background: var(--namu-card-bg);
+  border-bottom: 2px solid var(--namu-border);
+}
+
+.admin-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.admin-header-title strong {
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.admin-back,
+.admin-refresh,
+.admin-login-close {
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-main);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-back,
+.admin-refresh {
+  width: 44px;
+  height: 44px;
+}
+
+.admin-back:hover,
+.admin-refresh:hover,
+.admin-login-close:hover {
+  background: var(--namu-status-light-gray);
+}
+
+.admin-back svg,
+.admin-refresh svg,
+.admin-login-close svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.admin-layout {
+  width: min(100%, 1510px);
+  min-height: calc(100vh - 98px);
+  margin: 0 auto;
+  padding: 36px 28px 0;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 24px;
+}
+
+.admin-nav,
+.admin-main {
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+}
+
+.admin-nav {
+  min-height: 700px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.admin-nav > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-nav-item {
+  width: 100%;
+  padding: 15px 16px;
+  color: var(--namu-text-main);
+  background: transparent;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-nav-item.active {
+  color: var(--namu-point1);
+  background: rgba(159, 178, 255, 0.3);
+}
+
+.admin-nav p {
+  margin: 0;
+  padding-top: 18px;
+  color: var(--namu-text-light);
+  border-top: 2px solid var(--namu-border);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.admin-main {
+  min-height: 700px;
+  padding: 38px 34px 70px;
+}
+
+.admin-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.admin-title-row h2,
+.admin-title-row p {
+  margin: 0;
+}
+
+.admin-title-row h2 {
+  font-size: 30px;
+}
+
+.admin-title-row p {
+  margin-top: 8px;
+  color: var(--namu-text-sub);
+  font-size: 16px;
+}
+
+.admin-title-row > strong {
+  color: var(--namu-point1);
+  font-size: 18px;
+}
+
+.admin-divider {
+  height: 2px;
+  margin: 28px 0;
+  background: var(--namu-border);
+}
+
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-message {
+  min-height: 220px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-sub);
+  background: var(--namu-status-light-gray);
+  border: 2px dashed var(--namu-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.admin-message.error {
+  color: var(--namu-status-red);
+  background: var(--namu-status-light-red);
+}
+
+.admin-reservation-card {
+  position: relative;
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(460px, 1.4fr) auto;
+  align-items: center;
+  gap: 24px;
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+}
+
+.admin-reservation-heading {
+  min-width: 0;
+}
+
+.admin-reservation-heading h3 {
+  margin: 0 0 8px;
+  overflow: hidden;
+  font-size: 19px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-reservation-heading strong {
+  color: var(--namu-status-green);
+  font-size: 14px;
+}
+
+.admin-reservation-card.cancelled .admin-reservation-heading strong,
+.admin-reservation-card.cancelled_by_admin .admin-reservation-heading strong {
+  color: var(--namu-status-red);
+}
+
+.admin-reservation-card dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 6px 12px;
+  font-size: 14px;
+}
+
+.admin-reservation-card dt {
+  color: var(--namu-text-light);
+  font-weight: 600;
+}
+
+.admin-reservation-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-cancel-button {
+  padding: 10px 14px;
+  color: var(--namu-status-red);
+  background: var(--namu-status-light-red);
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin-cancel-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.admin-content.room-management {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-room-row {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 2px solid var(--namu-border);
+  border-left: 7px solid var(--namu-status-green);
+  border-radius: 8px;
+}
+
+.admin-room-row.blocked {
+  border-left-color: var(--namu-status-red);
+}
+
+.admin-room-row.disabled {
+  border-left-color: var(--namu-status-gray);
+}
+
+.admin-room-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-room-row strong {
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-room-row span {
+  color: var(--namu-text-light);
+  font-size: 13px;
+}
+
+.admin-room-row select {
+  min-width: 104px;
+  padding: 8px 28px 8px 9px;
+  color: var(--namu-text-main);
+  background: var(--namu-card-bg);
+  border: 1px solid var(--namu-border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.admin-login-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.42);
+}
+
+.admin-login-dialog {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: var(--namu-card-bg);
+  border-radius: 10px;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.22);
+}
+
+.admin-login-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+}
+
+.admin-login-dialog h2,
+.admin-login-dialog p {
+  margin: 0;
+}
+
+.admin-login-dialog h2 {
+  font-size: 25px;
+}
+
+.admin-login-dialog > p {
+  color: var(--namu-text-sub);
+  font-size: 14px;
+}
+
+.admin-login-dialog input {
+  height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--namu-border);
+  border-radius: 7px;
+  outline: none;
+}
+
+.admin-login-dialog input:focus {
+  border-color: var(--namu-point1);
+}
+
+.admin-login-submit {
+  height: 48px;
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+  border-radius: 7px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-login-submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.admin-login-dialog .admin-login-message {
+  min-height: 20px;
+  color: var(--namu-status-red);
+  font-size: 13px;
+  font-weight: 600;
 }

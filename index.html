@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>학교 반 대여 시스템</title>
-  <link rel="stylesheet" href="./styles.css?v=login-guard-1">
+  <link rel="stylesheet" href="./styles.css?v=admin-console-1">
 </head>
 <body>
   <div class="app-shell">
@@ -43,9 +43,9 @@
 
         <span class="nav-divider" aria-hidden="true"></span>
 
-        <span class="school-brand" aria-label="대전전민고등학교">
+        <button class="school-brand" id="school-brand" type="button" aria-label="대전전민고등학교">
           <img src="./assets/school-logo.gif" width="158" height="46" alt="대전전민고등학교">
-        </span>
+        </button>
       </nav>
     </header>
 
@@ -205,6 +205,43 @@
       </div>
     </section>
 
+    <section class="admin-view" id="admin-view" aria-labelledby="admin-title" aria-hidden="true">
+      <header class="admin-header">
+        <button class="admin-back" type="button" aria-label="관리자 창 닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        </button>
+        <div class="admin-header-title">
+          <span class="title-dot" aria-hidden="true"></span>
+          <strong>학교 반 대여 시스템 관리자</strong>
+        </div>
+        <button class="admin-refresh" type="button" aria-label="관리자 데이터 새로고침" title="새로고침">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"></path></svg>
+        </button>
+      </header>
+
+      <div class="admin-layout">
+        <aside class="admin-nav" aria-label="관리자 메뉴">
+          <div>
+            <button class="admin-nav-item active" type="button" data-admin-view="reservations">전체 예약</button>
+            <button class="admin-nav-item" type="button" data-admin-view="rooms">교실 상태 관리</button>
+          </div>
+          <p>관리자 작업은 Supabase에 즉시 반영됩니다.</p>
+        </aside>
+
+        <main class="admin-main">
+          <div class="admin-title-row">
+            <div>
+              <h2 id="admin-title">전체 예약</h2>
+              <p id="admin-description">예약자와 사용 정보를 한눈에 확인할 수 있습니다.</p>
+            </div>
+            <strong id="admin-count"></strong>
+          </div>
+          <div class="admin-divider"></div>
+          <div class="admin-content" id="admin-content"></div>
+        </main>
+      </div>
+    </section>
+
     <div class="auth-dialog-backdrop" id="auth-dialog" hidden>
       <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-dialog-title">
         <button class="auth-dialog-close" id="auth-dialog-close" type="button" aria-label="로그인 안내 닫기">
@@ -218,6 +255,19 @@
           Google 계정으로 계속하기
         </button>
         <p class="auth-dialog-message" id="auth-dialog-message" aria-live="polite"></p>
+      </section>
+    </div>
+
+    <div class="admin-login-backdrop" id="admin-login-dialog" hidden>
+      <section class="admin-login-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-login-title">
+        <button class="admin-login-close" type="button" aria-label="관리자 로그인 닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+        <h2 id="admin-login-title">관리자 접근</h2>
+        <p>관리자 비밀번호를 입력하세요.</p>
+        <input id="admin-password-input" type="password" autocomplete="current-password" aria-label="관리자 비밀번호">
+        <button class="admin-login-submit" id="admin-login-submit" type="button">관리자 창 열기</button>
+        <p class="admin-login-message" id="admin-login-message" aria-live="polite"></p>
       </section>
     </div>
   </div>
@@ -242,7 +292,7 @@
         reserve: { label: "예약 가능" },
         rentable: { label: "대여 가능" },
         blocked: { label: "예약 불가" },
-        disabled: { label: "사용 불가" }
+        disabled: { label: "운영 중단" }
       };
 
       const room = (code, name, pinned = false) => ({
@@ -351,6 +401,7 @@
       const tabs = document.querySelectorAll("[data-floor]");
       const grid = document.getElementById("classroom-grid");
       const availability = document.getElementById("available-count");
+      const schoolBrand = document.getElementById("school-brand");
       const drawer = document.getElementById("room-detail");
       const drawerName = document.getElementById("drawer-room-name");
       const drawerStatus = document.getElementById("drawer-room-status");
@@ -382,6 +433,19 @@
       const myViewTitle = document.getElementById("my-reservations-title");
       const myViewDescription = document.getElementById("my-reservations-description");
       const myViewNote = document.getElementById("my-view-note");
+      const adminView = document.getElementById("admin-view");
+      const adminBack = document.querySelector(".admin-back");
+      const adminRefresh = document.querySelector(".admin-refresh");
+      const adminViewButtons = document.querySelectorAll("[data-admin-view]");
+      const adminTitle = document.getElementById("admin-title");
+      const adminDescription = document.getElementById("admin-description");
+      const adminCount = document.getElementById("admin-count");
+      const adminContent = document.getElementById("admin-content");
+      const adminLoginDialog = document.getElementById("admin-login-dialog");
+      const adminLoginClose = document.querySelector(".admin-login-close");
+      const adminPasswordInput = document.getElementById("admin-password-input");
+      const adminLoginSubmit = document.getElementById("admin-login-submit");
+      const adminLoginMessage = document.getElementById("admin-login-message");
       const weekdayNames = ["일", "월", "화", "수", "목", "금", "토"];
       const pinnedRoomsStorageKey = "school-pinned-room-codes";
       const today = new Date();
@@ -392,6 +456,10 @@
       let currentFloor = "2";
       let currentUser = null;
       let reserveSaving = false;
+      let adminPassword = "";
+      let currentAdminView = "reservations";
+      let logoClickCount = 0;
+      let logoClickTimer = null;
 
       function getUserLabel(user) {
         return user?.user_metadata?.full_name ||
@@ -423,10 +491,12 @@
           authUserEmail.textContent = currentUser.email || "Google 계정";
           closeAuthDialog();
         } else {
+          adminPassword = "";
           authAvatar.textContent = "";
           authUserName.textContent = "";
           authUserEmail.textContent = "";
           closeMyReservations();
+          closeAdminView();
         }
         syncReserveButtonLabel();
       }
@@ -502,6 +572,7 @@
         if (
           !action ||
           action === authLoginButton ||
+          action === schoolBrand ||
           action.closest("#auth-dialog")
         ) {
           return;
@@ -572,8 +643,9 @@
       }
 
       function createPinnedClassroomCard(roomItem) {
+        const roomMeta = statusMeta[roomItem.status] || statusMeta.disabled;
         const card = document.createElement("article");
-        card.className = "pinned-classroom-card";
+        card.className = `pinned-classroom-card ${roomItem.status}`;
 
         const openButton = document.createElement("button");
         openButton.type = "button";
@@ -584,7 +656,7 @@
         title.textContent = roomItem.name;
 
         const status = document.createElement("span");
-        status.textContent = `●  ${roomItem.code} · 대여 가능`;
+        status.textContent = `●  ${roomItem.code} · ${roomMeta.label}`;
         openButton.append(title, status);
         openButton.addEventListener("click", () => {
           closeMyReservations();
@@ -649,6 +721,9 @@
       }
 
       function getReservationUsageState(reservation) {
+        if (reservation.status === "cancelled_by_admin") {
+          return { className: "admin-cancelled", label: "관리자에 의해 취소되었습니다." };
+        }
         const start = new Date(`${reservation.reservation_date}T${reservation.start_time}`);
         const end = new Date(`${reservation.reservation_date}T${reservation.end_time}`);
         const now = new Date();
@@ -670,8 +745,11 @@
 
       async function dismissReservation(reservation, usageState, button) {
         const isCompleted = usageState.className === "completed";
+        const isAdminCancelled = usageState.className === "admin-cancelled";
         const confirmed = window.confirm(
-          isCompleted
+          isAdminCancelled
+            ? "관리자 취소 알림을 닫으시겠습니까?"
+            : isCompleted
             ? "사용 완료 내역을 목록에서 닫으시겠습니까?"
             : "이 예약을 취소하시겠습니까?"
         );
@@ -693,7 +771,7 @@
         }
 
         await renderMyReservations();
-        if (!isCompleted) {
+        if (!isCompleted && !isAdminCancelled) {
           await refreshTimeSlots();
         }
       }
@@ -746,9 +824,13 @@
         dismiss.className = "my-reservation-dismiss";
         dismiss.setAttribute(
           "aria-label",
-          usageState.className === "completed" ? "사용 완료 내역 닫기" : "예약 취소"
+          usageState.className === "admin-cancelled"
+            ? "관리자 취소 알림 닫기"
+            : usageState.className === "completed"
+              ? "사용 완료 내역 닫기"
+              : "예약 취소"
         );
-        dismiss.title = usageState.className === "completed" ? "사용 완료 내역 닫기" : "예약 취소";
+        dismiss.title = dismiss.getAttribute("aria-label");
         dismiss.textContent = "×";
         dismiss.addEventListener("click", () => {
           void dismissReservation(reservation, usageState, dismiss);
@@ -780,7 +862,7 @@
           .from("reservations")
           .select("id, room_code, reservation_date, start_time, end_time, status")
           .eq("user_id", currentUser.id)
-          .eq("status", "confirmed")
+          .in("status", ["confirmed", "cancelled_by_admin"])
           .order("reservation_date", { ascending: false })
           .order("start_time", { ascending: false });
 
@@ -810,6 +892,267 @@
       function closeMyReservations() {
         myReservationsView.classList.remove("is-open");
         myReservationsView.setAttribute("aria-hidden", "true");
+      }
+
+      function getAllRooms() {
+        return Object.entries(floors).flatMap(([floor, data]) =>
+          data.rooms.map((roomItem) => ({ floor, room: roomItem }))
+        );
+      }
+
+      async function loadRoomControls() {
+        if (!database) {
+          return;
+        }
+
+        const { data, error } = await database.rpc("get_room_controls");
+        if (error) {
+          console.error("교실 상태를 불러오지 못했습니다.", error);
+          return;
+        }
+
+        getAllRooms().forEach(({ room: roomItem }) => {
+          roomItem.status = "rentable";
+        });
+        (data || []).forEach((control) => {
+          const roomItem = findRoom(control.room_code);
+          if (roomItem) {
+            roomItem.status = control.status;
+          }
+        });
+        renderFloor(currentFloor);
+      }
+
+      function showAdminMessage(message, className = "") {
+        const element = document.createElement("p");
+        element.className = `admin-message${className ? ` ${className}` : ""}`;
+        element.textContent = message;
+        adminContent.replaceChildren(element);
+      }
+
+      function closeAdminLogin() {
+        adminLoginDialog.hidden = true;
+        adminPasswordInput.value = "";
+        adminLoginMessage.textContent = "";
+        adminLoginSubmit.disabled = false;
+      }
+
+      function openAdminLogin() {
+        if (!database) {
+          window.alert("Supabase 연결 정보를 먼저 설정해주세요.");
+          return;
+        }
+        if (!currentUser) {
+          openAuthDialog("관리자 창에 접근하려면 Google 로그인이 필요합니다.");
+          return;
+        }
+        adminLoginDialog.hidden = false;
+        adminLoginMessage.textContent = "";
+        adminPasswordInput.focus();
+      }
+
+      function closeAdminView() {
+        adminView.classList.remove("is-open");
+        adminView.setAttribute("aria-hidden", "true");
+      }
+
+      function openAdminView() {
+        closeDrawer();
+        closeMyReservations();
+        closeAdminLogin();
+        adminView.classList.add("is-open");
+        adminView.setAttribute("aria-hidden", "false");
+        setAdminView("reservations");
+      }
+
+      function getAdminReservationStatus(reservation) {
+        if (reservation.status === "cancelled_by_admin") {
+          return "관리자 취소";
+        }
+        if (reservation.status === "cancelled") {
+          return "사용자 취소 / 닫힘";
+        }
+        return getReservationUsageState(reservation).label;
+      }
+
+      function createAdminReservationCard(reservation) {
+        const card = document.createElement("article");
+        card.className = `admin-reservation-card ${reservation.status}`;
+
+        const heading = document.createElement("div");
+        heading.className = "admin-reservation-heading";
+        const title = document.createElement("h3");
+        title.textContent = `${reservation.room_code} · ${reservation.room_name}`;
+        const status = document.createElement("strong");
+        status.textContent = getAdminReservationStatus(reservation);
+        heading.append(title, status);
+
+        const details = document.createElement("dl");
+        [
+          ["예약자", reservation.user_email || "이메일 없음"],
+          ["일정", formatReservationDate(reservation)],
+          ["사용 목적", reservation.purpose],
+          ["예상 인원", `${reservation.expected_people}명`]
+        ].forEach(([label, value]) => {
+          const term = document.createElement("dt");
+          term.textContent = label;
+          const description = document.createElement("dd");
+          description.textContent = value;
+          details.append(term, description);
+        });
+
+        card.append(heading, details);
+        if (reservation.status === "confirmed") {
+          const cancel = document.createElement("button");
+          cancel.type = "button";
+          cancel.className = "admin-cancel-button";
+          cancel.textContent = "예약 취소";
+          cancel.addEventListener("click", async () => {
+            if (!window.confirm(`${reservation.user_email}님의 예약을 관리자 권한으로 취소하시겠습니까?`)) {
+              return;
+            }
+            cancel.disabled = true;
+            const { data, error } = await database.rpc("admin_cancel_reservation", {
+              p_password: adminPassword,
+              p_reservation_id: reservation.id
+            });
+            if (error || data !== true) {
+              window.alert(error?.message || "예약을 취소하지 못했습니다.");
+              cancel.disabled = false;
+              return;
+            }
+            await renderAdminReservations();
+            await refreshTimeSlots();
+          });
+          card.append(cancel);
+        }
+        return card;
+      }
+
+      async function renderAdminReservations() {
+        showAdminMessage("전체 예약을 불러오는 중입니다.");
+        const { data, error } = await database.rpc("admin_list_reservations", {
+          p_password: adminPassword
+        });
+        if (error) {
+          showAdminMessage(error.message || "전체 예약을 불러오지 못했습니다.", "error");
+          return;
+        }
+        adminCount.textContent = `${data.length}건`;
+        if (data.length === 0) {
+          showAdminMessage("등록된 예약이 없습니다.");
+          return;
+        }
+        adminContent.replaceChildren(...data.map(createAdminReservationCard));
+      }
+
+      function createAdminRoomRow({ floor, room: roomItem }) {
+        const row = document.createElement("article");
+        row.className = `admin-room-row ${roomItem.status}`;
+
+        const roomCopy = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = roomItem.name;
+        const code = document.createElement("span");
+        code.textContent = `${floor}F · ${roomItem.code}`;
+        roomCopy.append(title, code);
+
+        const select = document.createElement("select");
+        select.setAttribute("aria-label", `${roomItem.name} 상태 변경`);
+        [
+          ["rentable", "대여 가능"],
+          ["blocked", "예약 불가"],
+          ["disabled", "운영 중단"]
+        ].forEach(([value, label]) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          select.append(option);
+        });
+        select.value = roomItem.status;
+        select.addEventListener("change", async () => {
+          const previousStatus = roomItem.status;
+          select.disabled = true;
+          const { data, error } = await database.rpc("admin_set_room_status", {
+            p_password: adminPassword,
+            p_room_code: roomItem.code,
+            p_status: select.value
+          });
+          if (error || data !== true) {
+            select.value = previousStatus;
+            window.alert(error?.message || "교실 상태를 변경하지 못했습니다.");
+          } else {
+            roomItem.status = select.value;
+            row.className = `admin-room-row ${roomItem.status}`;
+            renderFloor(currentFloor);
+            if (selectedRoom?.code === roomItem.code) {
+              openDrawer(roomItem);
+            }
+          }
+          select.disabled = false;
+        });
+
+        row.append(roomCopy, select);
+        return row;
+      }
+
+      function renderAdminRooms() {
+        const allRooms = getAllRooms();
+        adminCount.textContent = `${allRooms.length}개`;
+        adminContent.replaceChildren(...allRooms.map(createAdminRoomRow));
+      }
+
+      function setAdminView(viewName) {
+        currentAdminView = viewName;
+        const roomView = viewName === "rooms";
+        adminViewButtons.forEach((button) => {
+          const active = button.dataset.adminView === viewName;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-current", active ? "page" : "false");
+        });
+        adminContent.classList.toggle("room-management", roomView);
+        adminTitle.textContent = roomView ? "교실 상태 관리" : "전체 예약";
+        adminDescription.textContent = roomView
+          ? "교실별 대여 가능 여부를 즉시 변경합니다."
+          : "예약자와 사용 정보를 한눈에 확인할 수 있습니다.";
+        if (roomView) {
+          renderAdminRooms();
+        } else {
+          void renderAdminReservations();
+        }
+      }
+
+      async function submitAdminLogin() {
+        const password = adminPasswordInput.value;
+        if (!password) {
+          adminLoginMessage.textContent = "비밀번호를 입력해주세요.";
+          return;
+        }
+        adminLoginSubmit.disabled = true;
+        adminLoginMessage.textContent = "관리자 권한을 확인하는 중입니다.";
+        const { data, error } = await database.rpc("admin_verify_access", {
+          p_password: password
+        });
+        if (error || data !== true) {
+          adminLoginMessage.textContent = "관리자 비밀번호가 올바르지 않습니다.";
+          adminLoginSubmit.disabled = false;
+          return;
+        }
+        adminPassword = password;
+        openAdminView();
+      }
+
+      function handleSchoolBrandClick() {
+        logoClickCount += 1;
+        window.clearTimeout(logoClickTimer);
+        logoClickTimer = window.setTimeout(() => {
+          logoClickCount = 0;
+        }, 2500);
+        if (logoClickCount >= 5) {
+          logoClickCount = 0;
+          window.clearTimeout(logoClickTimer);
+          openAdminLogin();
+        }
       }
 
       function addDays(date, amount) {
@@ -870,12 +1213,16 @@
 
       function resetTimeButtons() {
         selectedSlot = null;
+        const roomStatus = selectedRoom?.status;
         timeButtons.forEach((button) => {
-          button.className = button.dataset.baseStatus;
+          const status = roomStatus === "blocked" || roomStatus === "disabled"
+            ? roomStatus
+            : button.dataset.baseStatus;
+          button.className = status;
           button.dataset.reserved = "false";
           button.setAttribute(
             "aria-disabled",
-            String(button.dataset.baseStatus !== "rentable")
+            String(status !== "rentable")
           );
         });
       }
@@ -883,6 +1230,9 @@
       async function refreshTimeSlots() {
         resetTimeButtons();
         if (!selectedRoom?.code) {
+          return;
+        }
+        if (selectedRoom.status === "blocked" || selectedRoom.status === "disabled") {
           return;
         }
         if (!database) {
@@ -1017,6 +1367,7 @@
         event.preventDefault();
         openMyReservations();
       });
+      schoolBrand.addEventListener("click", handleSchoolBrandClick);
 
       authLoginButton.addEventListener("click", () => openAuthDialog());
       googleLoginPrimary.addEventListener("click", signInWithGoogle);
@@ -1032,6 +1383,23 @@
       myReservationsClose.addEventListener("click", closeMyReservations);
       myViewButtons.forEach((button) => {
         button.addEventListener("click", () => setMyView(button.dataset.myView));
+      });
+      adminBack.addEventListener("click", closeAdminView);
+      adminRefresh.addEventListener("click", () => setAdminView(currentAdminView));
+      adminViewButtons.forEach((button) => {
+        button.addEventListener("click", () => setAdminView(button.dataset.adminView));
+      });
+      adminLoginClose.addEventListener("click", closeAdminLogin);
+      adminLoginSubmit.addEventListener("click", submitAdminLogin);
+      adminPasswordInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          void submitAdminLogin();
+        }
+      });
+      adminLoginDialog.addEventListener("click", (event) => {
+        if (event.target === adminLoginDialog) {
+          closeAdminLogin();
+        }
       });
 
       dateMoveButtons.forEach((button) => {
@@ -1058,7 +1426,9 @@
           if (
             button.dataset.baseStatus !== "rentable" ||
             button.dataset.reserved === "true" ||
-            !selectedRoom
+            !selectedRoom ||
+            selectedRoom.status === "blocked" ||
+            selectedRoom.status === "disabled"
           ) {
             return;
           }
@@ -1145,6 +1515,8 @@
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           closeAuthDialog();
+          closeAdminLogin();
+          closeAdminView();
           closeMyReservations();
           closeDrawer();
         }
@@ -1156,6 +1528,7 @@
       renderDates();
       renderFloor(currentFloor);
       void initializeAuth();
+      void loadRoomControls();
       if (!database) {
         console.info("Supabase 연결 전: supabase-config.js의 URL과 publishable key를 설정하세요.");
       }

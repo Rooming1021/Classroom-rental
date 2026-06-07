@@ -157,13 +157,16 @@ to authenticated
 using (
   (select auth.uid()) is not null
   and (select auth.uid()) = user_id
-  and status = 'confirmed'
+  and status in ('confirmed', 'cancelled_by_admin')
 )
 with check (
   (select auth.uid()) is not null
   and (select auth.uid()) = user_id
   and status = 'cancelled'
 );
+
+-- Run the admin console migration after this base schema:
+-- supabase/migrations/20260607020000_add_admin_console.sql
 
 -- 기존 비로그인 예약은 user_id가 null이라 내 예약에는 표시되지 않지만,
 -- get_reserved_slots 함수에는 포함되어 기존 예약 시간 충돌은 유지됩니다.
