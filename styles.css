@@ -1774,6 +1774,36 @@ input:focus-visible {
   gap: 12px;
 }
 
+.admin-floor-tabs {
+  grid-column: 1 / -1;
+  height: 48px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  background: var(--namu-card-bg);
+  border: 2px solid var(--namu-border);
+  border-radius: 8px;
+}
+
+.admin-floor-tabs button {
+  color: var(--namu-point1);
+  background: transparent;
+  border-right: 1px solid var(--namu-border);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-floor-tabs button:last-child {
+  border-right: 0;
+}
+
+.admin-floor-tabs button.active {
+  color: var(--namu-text-white);
+  background: var(--namu-point1);
+}
+
 .admin-room-row {
   padding: 16px;
   display: flex;

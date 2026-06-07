@@ -458,6 +458,7 @@
       let reserveSaving = false;
       let adminPassword = "";
       let currentAdminView = "reservations";
+      let currentAdminFloor = "1";
       let logoClickCount = 0;
       let logoClickTimer = null;
 
@@ -1097,9 +1098,29 @@
       }
 
       function renderAdminRooms() {
-        const allRooms = getAllRooms();
-        adminCount.textContent = `${allRooms.length}개`;
-        adminContent.replaceChildren(...allRooms.map(createAdminRoomRow));
+        const floorRooms = getAllRooms().filter(({ floor }) => floor === currentAdminFloor);
+        const floorTabs = document.createElement("div");
+        floorTabs.className = "admin-floor-tabs";
+        floorTabs.setAttribute("role", "tablist");
+        floorTabs.setAttribute("aria-label", "관리할 층 선택");
+
+        Object.keys(floors).forEach((floor) => {
+          const button = document.createElement("button");
+          const selected = floor === currentAdminFloor;
+          button.type = "button";
+          button.className = selected ? "active" : "";
+          button.textContent = `${floor}F`;
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-selected", String(selected));
+          button.addEventListener("click", () => {
+            currentAdminFloor = floor;
+            renderAdminRooms();
+          });
+          floorTabs.append(button);
+        });
+
+        adminCount.textContent = `${currentAdminFloor}F · ${floorRooms.length}개`;
+        adminContent.replaceChildren(floorTabs, ...floorRooms.map(createAdminRoomRow));
       }
 
       function setAdminView(viewName) {
