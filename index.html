@@ -668,6 +668,36 @@
         return `${dateLabel}  ${reservation.start_time.slice(0, 5)} ~ ${reservation.end_time.slice(0, 5)}`;
       }
 
+      async function dismissReservation(reservation, usageState, button) {
+        const isCompleted = usageState.className === "completed";
+        const confirmed = window.confirm(
+          isCompleted
+            ? "사용 완료 내역을 목록에서 닫으시겠습니까?"
+            : "이 예약을 취소하시겠습니까?"
+        );
+        if (!confirmed) {
+          return;
+        }
+
+        button.disabled = true;
+        const { error } = await database
+          .from("reservations")
+          .update({ status: "cancelled" })
+          .eq("id", reservation.id)
+          .eq("user_id", currentUser.id);
+
+        if (error) {
+          window.alert(error.message || "예약 내역을 닫지 못했습니다.");
+          button.disabled = false;
+          return;
+        }
+
+        await renderMyReservations();
+        if (!isCompleted) {
+          await refreshTimeSlots();
+        }
+      }
+
       function createMyReservationCard(reservation) {
         const usageState = getReservationUsageState(reservation);
         const roomItem = findRoom(reservation.room_code);
@@ -710,7 +740,21 @@
         arrow.setAttribute("aria-hidden", "true");
         arrow.textContent = "›";
         more.append(arrow);
-        card.append(content, more);
+
+        const dismiss = document.createElement("button");
+        dismiss.type = "button";
+        dismiss.className = "my-reservation-dismiss";
+        dismiss.setAttribute(
+          "aria-label",
+          usageState.className === "completed" ? "사용 완료 내역 닫기" : "예약 취소"
+        );
+        dismiss.title = usageState.className === "completed" ? "사용 완료 내역 닫기" : "예약 취소";
+        dismiss.textContent = "×";
+        dismiss.addEventListener("click", () => {
+          void dismissReservation(reservation, usageState, dismiss);
+        });
+
+        card.append(content, more, dismiss);
         return card;
       }
 

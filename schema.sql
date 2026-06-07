@@ -116,6 +116,7 @@ grant insert (
   purpose,
   expected_people
 ) on public.reservations to authenticated;
+grant update (status) on table public.reservations to authenticated;
 
 revoke all on function public.get_reserved_slots(text, date) from public;
 grant execute on function public.get_reserved_slots(text, date) to anon, authenticated;
@@ -124,6 +125,7 @@ drop policy if exists "public can read confirmed reservations" on public.reserva
 drop policy if exists "public can create future reservations" on public.reservations;
 drop policy if exists "users can read own reservations" on public.reservations;
 drop policy if exists "users can create own reservations" on public.reservations;
+drop policy if exists "users can cancel own reservations" on public.reservations;
 
 create policy "users can read own reservations"
 on public.reservations
@@ -146,6 +148,21 @@ with check (
   and start_time < end_time
   and char_length(trim(purpose)) between 1 and 200
   and expected_people between 1 and 999
+);
+
+create policy "users can cancel own reservations"
+on public.reservations
+for update
+to authenticated
+using (
+  (select auth.uid()) is not null
+  and (select auth.uid()) = user_id
+  and status = 'confirmed'
+)
+with check (
+  (select auth.uid()) is not null
+  and (select auth.uid()) = user_id
+  and status = 'cancelled'
 );
 
 -- 기존 비로그인 예약은 user_id가 null이라 내 예약에는 표시되지 않지만,

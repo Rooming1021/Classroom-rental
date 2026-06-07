@@ -1338,6 +1338,7 @@ input:focus-visible {
 
 .my-reservation-more {
   flex: 0 0 auto;
+  margin-right: 22px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1356,6 +1357,33 @@ input:focus-visible {
   font-size: 28px;
   font-weight: 400;
   line-height: 1;
+}
+
+.my-reservation-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--namu-text-light);
+  background: transparent;
+  border-radius: 6px;
+  font-size: 27px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.my-reservation-dismiss:hover {
+  color: var(--namu-status-red);
+  background: var(--namu-status-light-red);
+}
+
+.my-reservation-dismiss:disabled {
+  cursor: wait;
+  opacity: 0.45;
 }
 
 .my-reservations-message {
